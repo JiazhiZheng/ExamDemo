@@ -9,8 +9,8 @@ public class OneTest {
     One one = new One();
     //Test foo
     assertEquals("foo", one.foo());
-
     System.out.println("hhhhh");
+    System.out.println("2333");
   }
 
 }
