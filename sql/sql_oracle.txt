@@ -1,0 +1,47 @@
+1.1
+SELECT COUNT(distinct A.msisdn) FROM
+(select MSISDN,SUM(PV) as PV from pagevisit
+      where record_day between '20171001' and '20171007'
+      group by msisdn) A ,
+      USER_INFO B 
+WHERE A.MSISDN=B.MSISDN
+      AND B.SEX='男'
+      AND A.PV>100;
+
+		
+1.2		
+SELECT distinct (c.MSISDN) AS MSISDN
+  FROM (SELECT b.MSISDN,
+               (MAX(to_char(b.RECORD_DAY, 'yyyymmdd')) -
+               MIN(to_char(b.RECORD_DAY, 'yyyymmdd')) + 1) AS days
+          FROM (SELECT a.MSISDN,
+                       a.RECORD_DAY,
+                       to_number(to_char(a.RECORD_DAY, 'yyyymmdd') - rownum) AS days
+                  FROM (SELECT MSISDN,
+                               to_date(to_char(RECORD_DAY, 'yyyymmdd'),
+                                       'yyyymmdd') AS RECORD_DAY
+                        
+                          FROM PAGEVISIT
+                         WHERE to_char(RECORD_DAY, 'yyyymmdd') >=
+                               '20171001'
+                           AND to_char(RECORD_DAY, 'yyyymmdd') <=
+                               '20171007'
+                         GROUP BY MSISDN, to_char(RECORD_DAY, 'yyyymmdd')
+                         ORDER BY MSISDN, to_char(RECORD_DAY, 'yyyymmdd')) a) b
+         GROUP BY b.MSISDN, b.days) c
+ WHERE c.days > 2
+ ORDER BY c.MSISDN ASC
+ 
+ 
+ 
+ 2.
+select dept_name,name,salary
+ from (
+select a.dept_name,b.name,b.salary,dense_rank() over(partition by a.dept_name order by b.salary desc) rn
+from department a
+join employee b
+on a.departmentid=b.departmentid
+) where rn <= 3;
+
+
+3.
